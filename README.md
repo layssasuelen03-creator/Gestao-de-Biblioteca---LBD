@@ -54,9 +54,9 @@ Para desenvolver ou editar o projeto, recomenda-se utilizar:
 
 - Visual Studio Code
 - Extensões necessárias:
--- Extension Pack for Java
--- Debugger for Java
--- Language Support for Java
+- Extension Pack for Java
+- Debugger for Java
+- Language Support for Java
 
 <br>
 
