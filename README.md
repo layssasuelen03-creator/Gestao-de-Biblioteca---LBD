@@ -1,4 +1,4 @@
-Sobre o Projeto
+#**Sobre o Projeto**
 
 O projeto Gestão de Biblioteca - LBD foi desenvolvido com foco em organização, controle e gerenciamento de acervo bibliográfico.
 
@@ -18,11 +18,11 @@ Relatórios
 Sistema de login
 
 
-Requisitos para Executar o Projeto
+#**Requisitos para Executar o Projeto**
 
 Para que o sistema funcione corretamente no computador, é necessário possuir alguns softwares instalados.
 
-✅ Java JDK
+✅ #**Java JDK**
 
 O sistema foi desenvolvido utilizando Java Swing, portanto é necessário instalar:
 
@@ -45,7 +45,8 @@ javac -version
 
 Se aparecer a versão instalada, o Java está funcionando corretamente.
 
-✅ VS Code + Extensões Java
+
+✅ #**VS Code + Extensões Java**
 
 Para desenvolver ou editar o projeto, recomenda-se utilizar:
 
@@ -54,7 +55,9 @@ Extensões necessárias:
 Extension Pack for Java
 Debugger for Java
 Language Support for Java
-✅ Banco de Dados
+
+
+✅ #**Banco de Dados**
 
 O projeto utiliza integração com banco de dados MySQL.
 
@@ -62,7 +65,8 @@ Instale:
 
 MySQL Server
 
-✅ Driver JDBC
+
+✅ #**Driver JDBC**
 
 Também é necessário adicionar o driver JDBC do MySQL no projeto.
 
@@ -74,7 +78,8 @@ O arquivo deve ser colocado na pasta:
 
 lib/
 
-✅ Executando o Sistema
+
+✅ #**Executando o Sistema**
 
 Após configurar tudo:
 
