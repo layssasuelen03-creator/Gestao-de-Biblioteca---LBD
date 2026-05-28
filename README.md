@@ -88,6 +88,6 @@ lib/
 
 Após configurar tudo:
 
-Abra o projeto no VS Code
-Configure o banco de dados
-Execute a classe:
+- Abra o projeto no VS Code
+- Configure o banco de dados
+- Execute a classe:
