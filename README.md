@@ -52,11 +52,11 @@ Se aparecer a versão instalada, o Java está funcionando corretamente.
 
 Para desenvolver ou editar o projeto, recomenda-se utilizar:
 
-Visual Studio Code
-Extensões necessárias:
-Extension Pack for Java
-Debugger for Java
-Language Support for Java
+- Visual Studio Code
+- Extensões necessárias:
+-- Extension Pack for Java
+-- Debugger for Java
+-- Language Support for Java
 
 <br>
 
