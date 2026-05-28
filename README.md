@@ -17,6 +17,7 @@ O sistema permite:
 - Relatórios
 - Sistema de login
 
+<br>
 
 **Requisitos para Executar o Projeto**
 
@@ -45,6 +46,7 @@ javac -version
 
 Se aparecer a versão instalada, o Java está funcionando corretamente.
 
+<br>
 
 ✅ **VS Code + Extensões Java**
 
@@ -56,6 +58,7 @@ Extension Pack for Java
 Debugger for Java
 Language Support for Java
 
+<br>
 
 ✅ **Banco de Dados**
 
@@ -65,6 +68,7 @@ Instale:
 
 MySQL Server
 
+<br>
 
 ✅ **Driver JDBC**
 
@@ -78,6 +82,7 @@ O arquivo deve ser colocado na pasta:
 
 lib/
 
+<br>
 
 ✅ **Executando o Sistema**
 
