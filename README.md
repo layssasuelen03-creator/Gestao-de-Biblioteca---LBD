@@ -6,16 +6,16 @@ A aplicação possui interface gráfica desenvolvida em Java Swing, arquitetura 
 
 O sistema permite:
 
-Cadastro de livros
-Cadastro de autores
-Cadastro de usuários
-Controle de empréstimos
-Registro de devoluções
-Organização por categorias
-Dashboard com informações do sistema
-Controle de estoque
-Relatórios
-Sistema de login
+- Cadastro de livros
+- Cadastro de autores
+- Cadastro de usuários
+- Controle de empréstimos
+- Registro de devoluções
+- Organização por categorias
+- Dashboard com informações do sistema
+- Controle de estoque
+- Relatórios
+- Sistema de login
 
 
 **Requisitos para Executar o Projeto**
