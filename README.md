@@ -1,4 +1,4 @@
-Sobre o Projeto
+**Sobre o Projeto**
 
 O projeto Gestão de Biblioteca - LBD foi desenvolvido com foco em organização, controle e gerenciamento de acervo bibliográfico.
 
@@ -6,23 +6,24 @@ A aplicação possui interface gráfica desenvolvida em Java Swing, arquitetura 
 
 O sistema permite:
 
-Cadastro de livros
-Cadastro de autores
-Cadastro de usuários
-Controle de empréstimos
-Registro de devoluções
-Organização por categorias
-Dashboard com informações do sistema
-Controle de estoque
-Relatórios
-Sistema de login
+- Cadastro de livros
+- Cadastro de autores
+- Cadastro de usuários
+- Controle de empréstimos
+- Registro de devoluções
+- Organização por categorias
+- Dashboard com informações do sistema
+- Controle de estoque
+- Relatórios
+- Sistema de login
 
+<br>
 
-Requisitos para Executar o Projeto
+**Requisitos para Executar o Projeto**
 
 Para que o sistema funcione corretamente no computador, é necessário possuir alguns softwares instalados.
 
-✅ Java JDK
+✅ **Java JDK**
 
 O sistema foi desenvolvido utilizando Java Swing, portanto é necessário instalar:
 
@@ -45,16 +46,21 @@ javac -version
 
 Se aparecer a versão instalada, o Java está funcionando corretamente.
 
-✅ VS Code + Extensões Java
+<br>
+
+✅ **VS Code + Extensões Java**
 
 Para desenvolver ou editar o projeto, recomenda-se utilizar:
 
-Visual Studio Code
-Extensões necessárias:
-Extension Pack for Java
-Debugger for Java
-Language Support for Java
-✅ Banco de Dados
+- Visual Studio Code
+- Extensões necessárias:
+- Extension Pack for Java
+- Debugger for Java
+- Language Support for Java
+
+<br>
+
+✅ **Banco de Dados**
 
 O projeto utiliza integração com banco de dados MySQL.
 
@@ -62,7 +68,9 @@ Instale:
 
 MySQL Server
 
-✅ Driver JDBC
+<br>
+
+✅ **Driver JDBC**
 
 Também é necessário adicionar o driver JDBC do MySQL no projeto.
 
@@ -74,10 +82,12 @@ O arquivo deve ser colocado na pasta:
 
 lib/
 
-✅ Executando o Sistema
+<br>
+
+✅ **Executando o Sistema**
 
 Após configurar tudo:
 
-Abra o projeto no VS Code
-Configure o banco de dados
-Execute a classe:
+- Abra o projeto no VS Code
+- Configure o banco de dados
+- Execute a classe:
