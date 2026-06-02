@@ -14,7 +14,7 @@ public class Usuario {
 
     public Usuario(int id, String nome, String email, String telefone, String status) {
         this.id       = id;
-        this.nome     = nome;
+        this.nome     = nome; 
         this.email    = email;
         this.telefone = telefone;
         this.status   = status;

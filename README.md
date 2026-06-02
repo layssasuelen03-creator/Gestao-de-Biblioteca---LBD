@@ -66,7 +66,7 @@ O projeto utiliza integração com banco de dados MySQL.
 
 Instale:
 
-MySQL Server
+- MySQL Server
 
 <br>
 
@@ -84,10 +84,35 @@ lib/
 
 <br>
 
+✅ **Configuração do banco**
+
+A conexão pode ser configurada de três maneiras:
+
+1) Variáveis de ambiente
+   - `BIBLIOTECA_DB_URL`
+   - `BIBLIOTECA_DB_USER`
+   - `BIBLIOTECA_DB_PASSWORD`
+
+2) Propriedades do sistema Java
+   - `-Djdbc.url=...`
+   - `-Djdbc.user=...`
+   - `-Djdbc.password=...`
+
+3) Arquivo de propriedades opcional
+   - `db/db.properties` ou `db.properties`
+   - Exemplo:
+     ```
+     jdbc.url=jdbc:mysql://localhost:3306/biblioteca?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+     jdbc.user=root
+     jdbc.password=senha
+     ```
+
+<br>
+
 ✅ **Executando o Sistema**
 
 Após configurar tudo:
 
 - Abra o projeto no VS Code
-- Configure o banco de dados
-- Execute a classe:
+- Configure o banco de dados usando `db/schema.sql`
+- Execute a aplicação a partir da classe `br.com.biblioteca.Main`
