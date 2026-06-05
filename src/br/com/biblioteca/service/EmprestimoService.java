@@ -5,24 +5,24 @@ import br.com.biblioteca.model.Emprestimo;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-
-//Serviço do Emprestimo — regras: prazo mínimo 1 dia, máximo 30 dias
+//Serviço do emprestimo — As regras de negócio: prazo mínimo de 1 dia, máximo de 30 dias 
 public class EmprestimoService {
 
     private final EmprestimoDAO dao = new EmprestimoDAO();
 
     public void realizarEmprestimo(Emprestimo e) throws Exception {
-        if (e.getLivroId() <= 0)    throw new Exception("Livro inválido.");
-        if (e.getUsuarioId() <= 0)  throw new Exception("Usuário inválido.");
-        if (e.getDataDevolucaoPrevista() == null)
-            throw new Exception("Data de devolução obrigatória.");
+        if (e.getLivroId()   <= 0) throw new Exception("Livro inválido.");
+        if (e.getUsuarioId() <= 0) throw new Exception("Usuário inválido.");
+        if (e.getDataPrevistaDevolucao() == null)
+            throw new Exception("Data prevista de devolução obrigatória.");
 
         LocalDate hoje = LocalDate.now();
         e.setDataEmprestimo(hoje);
 
-        long dias = java.time.temporal.ChronoUnit.DAYS.between(hoje, e.getDataDevolucaoPrevista());
+        long dias = ChronoUnit.DAYS.between(hoje, e.getDataPrevistaDevolucao());
         if (dias < 1)  throw new Exception("Data de devolução deve ser futura.");
         if (dias > 30) throw new Exception("Prazo máximo de empréstimo: 30 dias.");
 

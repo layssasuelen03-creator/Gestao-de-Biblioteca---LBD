@@ -1,13 +1,17 @@
 package br.com.biblioteca.ui;
 
+import br.com.biblioteca.service.EmprestimoService;
+
 import br.com.biblioteca.ui.Components.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 
+//Tabela de devoluções
 public class PainelDevolucoes extends JPanel {
 
-    private final TelaPrincipal frame;
+    private final TelaPrincipal     frame;
+    private final EmprestimoService service = new EmprestimoService();
 
     public PainelDevolucoes(TelaPrincipal frame) {
         this.frame = frame;
@@ -28,7 +32,6 @@ public class PainelDevolucoes extends JPanel {
         gbc.weightx = 1;
         gbc.insets = new Insets(4, 0, 4, 0);
 
-        // Fields
         JTextField fId     = Components.styledField("Ex: 3");
         JTextField fLivro  = Components.styledField("Título do livro");
         JTextField fMembro = Components.styledField("Nome do membro");
@@ -53,15 +56,34 @@ public class PainelDevolucoes extends JPanel {
         btn.setPreferredSize(new Dimension(Integer.MAX_VALUE, 40));
         btn.addActionListener(e -> {
             if (fId.getText().isBlank()) {
-                JOptionPane.showMessageDialog(frame,
-                    "Informe o ID do empréstimo.", "Atenção", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Informe o ID do empréstimo.", "Atenção", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            JOptionPane.showMessageDialog(frame,
-                "Devolução registrada com sucesso!\nCondição: " + fCondicao.getSelectedItem(),
-                "Devolução Confirmada", JOptionPane.INFORMATION_MESSAGE);
-            fId.setText(""); fLivro.setText(""); fMembro.setText("");
-            fCondicao.setSelectedIndex(0);
+            int id;
+            try { id = Integer.parseInt(fId.getText().trim()); }
+            catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "ID inválido.", "Erro", JOptionPane.ERROR_MESSAGE); return;
+            }
+            int opt = JOptionPane.showConfirmDialog(frame,
+                "Confirmar devolução do empréstimo #" + id + "?\nCondição: " + fCondicao.getSelectedItem(),
+                "Confirmar Devolução", JOptionPane.YES_NO_OPTION);
+            if (opt == JOptionPane.YES_OPTION) {
+                try {
+                    service.registrarDevolucao(id);
+                    JOptionPane.showMessageDialog(frame,
+                        "Devolução registrada com sucesso!\nCondição: " + fCondicao.getSelectedItem(),
+                        "Devolução Confirmada", JOptionPane.INFORMATION_MESSAGE);
+                    fId.setText(""); fLivro.setText(""); fMembro.setText("");
+                    fCondicao.setSelectedIndex(0);
+                    //Atualiza painéis vinculados
+                    frame.painelEmprestimos.refresh();
+                    frame.painelDashboard.refresh();
+                    frame.painelEstoque.refresh();
+                    frame.painelLivros.refresh(); 
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frame, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         });
         form.add(btn, gbc);
 

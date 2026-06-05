@@ -1,6 +1,6 @@
 package br.com.biblioteca.model;
 
-//Entidade Usuario — mapeia a tabela usuario
+// Entidade Usuario — Mapeia a tabela usuario
 public class Usuario {
 
     private int    id;
@@ -38,5 +38,5 @@ public class Usuario {
     public String getStatus()           { return status; }
     public void   setStatus(String s)   { this.status = s; }
 
-    @Override public String toString() { return nome; }
+    @Override public String toString()  { return nome; }
 }

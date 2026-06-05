@@ -7,12 +7,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+//Tabela usuario 
 public class UsuarioDAO {
 
-    //CREATE 
     public void inserir(Usuario u) throws SQLException {
-        String sql = "INSERT INTO usuarios (nome, email, telefone, senha, status) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO usuario (nome, email, telefone, senha, status) VALUES (?,?,?,?,?)";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, u.getNome());
@@ -24,10 +23,9 @@ public class UsuarioDAO {
         }
     }
 
-    //READ 
     public List<Usuario> listarTodos() throws SQLException {
         List<Usuario> lista = new ArrayList<>();
-        String sql = "SELECT * FROM usuarios ORDER BY nome";
+        String sql = "SELECT id_usuario, nome, email, telefone, senha, status FROM usuario ORDER BY nome";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -37,7 +35,7 @@ public class UsuarioDAO {
     }
 
     public Usuario buscarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM usuarios WHERE id = ?";
+        String sql = "SELECT id_usuario, nome, email, telefone, senha, status FROM usuario WHERE id_usuario = ?";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -48,9 +46,23 @@ public class UsuarioDAO {
         return null;
     }
 
-    //UPDATE 
+    //Responsável por buscar um usuário com base no email e senha fornecidos e onde status = ativo
+    public Usuario autenticar(String email, String senha) throws SQLException {
+        String sql = "SELECT id_usuario, nome, email, telefone, senha, status " +
+                     "FROM usuario WHERE email = ? AND senha = ? AND status = 'ativo'";
+        try (Connection c = ConnectionFactory.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, senha);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return mapear(rs);
+            }
+        }
+        return null;
+    }
+
     public void atualizar(Usuario u) throws SQLException {
-        String sql = "UPDATE usuarios SET nome=?, email=?, telefone=?, status=? WHERE id=?";
+        String sql = "UPDATE usuario SET nome = ?, email = ?, telefone = ?, status = ? WHERE id_usuario = ?";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, u.getNome());
@@ -62,9 +74,8 @@ public class UsuarioDAO {
         }
     }
 
-    //DELETE 
     public void excluir(int id) throws SQLException {
-        String sql = "DELETE FROM usuarios WHERE id = ?";
+        String sql = "DELETE FROM usuario WHERE id_usuario = ?";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -72,9 +83,8 @@ public class UsuarioDAO {
         }
     }
 
-    //Contagem 
     public int contarTotal() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM usuarios";
+        String sql = "SELECT COUNT(*) FROM usuario";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -83,14 +93,24 @@ public class UsuarioDAO {
         return 0;
     }
 
-    //Mapper 
+    public int contarAtivos() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM usuario WHERE status = 'ativo'";
+        try (Connection c = ConnectionFactory.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        }
+        return 0;
+    }
+
     private Usuario mapear(ResultSet rs) throws SQLException {
-        return new Usuario(
-            rs.getInt   ("id"),
-            rs.getString("nome"),
-            rs.getString("email"),
-            rs.getString("telefone"),
-            rs.getString("status")
-        );
+        Usuario u = new Usuario();
+        u.setId      (rs.getInt   ("id_usuario"));
+        u.setNome    (rs.getString("nome"));
+        u.setEmail   (rs.getString("email"));
+        u.setTelefone(rs.getString("telefone"));
+        u.setSenha   (rs.getString("senha"));
+        u.setStatus  (rs.getString("status"));
+        return u;
     }
 }

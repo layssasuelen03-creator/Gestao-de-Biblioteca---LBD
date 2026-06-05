@@ -6,16 +6,14 @@ import br.com.biblioteca.model.Livro;
 import java.sql.SQLException;
 import java.util.List;
 
-
-//Serviço do Livro — valida regras de negócio antes de chamar o DAO
+//Serviço do Livro — Vai validar as regras de negócio antes de chamar o DAO
 public class LivroService {
 
     private final LivroDAO dao = new LivroDAO();
 
-    /** Regra: título e autor obrigatórios; cópias >= 1. */
     public void cadastrar(Livro l) throws Exception {
         validar(l);
-        l.setCopiasDisponiveis(l.getTotalCopias());  // ao cadastrar, tudo disponível
+        l.setStatus("disponível");
         dao.inserir(l);
     }
 
@@ -40,12 +38,14 @@ public class LivroService {
         return dao.contarTotal();
     }
 
+    public int contarDisponiveis() throws SQLException {
+        return dao.contarDisponiveis();
+    }
+
     private void validar(Livro l) throws Exception {
         if (l.getTitulo() == null || l.getTitulo().isBlank())
             throw new Exception("Título é obrigatório.");
-        if (l.getAutor() == null || l.getAutor().isBlank())
+        if (l.getIdAutor() <= 0)
             throw new Exception("Autor é obrigatório.");
-        if (l.getTotalCopias() < 1)
-            throw new Exception("Total de cópias deve ser pelo menos 1.");
     }
 }

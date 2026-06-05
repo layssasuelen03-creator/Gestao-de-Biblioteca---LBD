@@ -1,62 +1,74 @@
 package br.com.biblioteca.ui;
 
+import br.com.biblioteca.model.Autor;
+import br.com.biblioteca.model.Categoria;
+import br.com.biblioteca.model.Editora;
+import br.com.biblioteca.model.Livro;
+import br.com.biblioteca.service.AutorService;
+import br.com.biblioteca.service.CategoriaService;
+import br.com.biblioteca.service.EditoraService;
+import br.com.biblioteca.service.LivroService;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.util.List;
+import java.time.format.DateTimeFormatter;
 
 public class PainelLivros extends JPanel {
 
-    private final TelaPrincipal frame;
-    private DefaultTableModel tableModel;
-    private JTable table;
+    private final TelaPrincipal  frame;
+    private final LivroService   service     = new LivroService();
+    private final AutorService   autorSvc    = new AutorService();
+    private final CategoriaService catSvc    = new CategoriaService();
+    private final EditoraService editoraSvc  = new EditoraService();
+    private DefaultTableModel    tableModel;
+    private JTable               table;
 
-    private static final String[] COLS = {"#","Titulo","Autor","Genero","Ano","Copias","Disponiveis","Status","Acoes"};
+    private static final DateTimeFormatter FORMATO_BR =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    private static final Object[][] SOURCE = {
-        {1,"Dom Quixote",                 "Miguel de Cervantes",        "Literatura", 1605,3,2,"Disponivel", Theme.COVERS[0]},
-        {2,"Pai Rico, Pai Pobre",          "Robert Kiyosaki",            "Financas",   1997,5,4,"Disponivel", Theme.COVERS[1]},
-        {3,"A Estrategia do Oceano Azul", "W. Chan Kim / R. Mauborgne", "Negocios",   2005,2,0,"Emprestado", Theme.COVERS[2]},
-        {4,"Didatica",                    "Ilma Passos Alencastro",     "Educacao",   2008,4,3,"Disponivel", Theme.COVERS[3]},
-        {5,"Entendendo Algoritmos",       "Aditya Y. Bhargava",         "Tecnologia", 2016,6,5,"Disponivel", Theme.COVERS[4]},
-        {6,"Clean Code",                  "Robert C. Martin",           "Tecnologia", 2020,3,1,"Disponivel", Theme.COVERS[5]},
-        {7,"O Poder do Habito",           "Charles Duhigg",             "Autoajuda",  2019,4,4,"Disponivel", Theme.COVERS[6]},
-        {8,"Design Patterns",             "Gang of Four",               "Tecnologia", 2018,2,2,"Disponivel", Theme.COVERS[7]},
-    };
+    private static final String[] COLS = {"#", "Titulo", "ISBN", "Ano", "Status", "Categoria", "Autor", "Editora", "Acoes"};
 
     public PainelLivros(TelaPrincipal frame) {
         this.frame = frame;
         setBackground(Theme.CONTENT_BG);
         setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(18,18,18,18));
+        setBorder(new EmptyBorder(18, 18, 18, 18));
 
         Components.RoundedPanel card = Components.card();
         Components.StyledButton addBtn = new Components.StyledButton("+ Novo Livro", Theme.BTN_PRIMARY, Color.WHITE);
         addBtn.addActionListener(e -> openForm(-1));
-        card.add(Components.cardHeader("Acervo de Livros ("+SOURCE.length+")", addBtn), BorderLayout.NORTH);
 
-        JPanel searchRow = new JPanel(new FlowLayout(FlowLayout.LEFT,10,8));
+        JPanel searchRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
         searchRow.setBackground(Color.WHITE);
-        searchRow.setBorder(new MatteBorder(0,0,1,0,Theme.CARD_BORDER));
-        JTextField searchF = Components.styledField(""); searchF.setPreferredSize(new Dimension(280,30));
+        searchRow.setBorder(new MatteBorder(0, 0, 1, 0, Theme.CARD_BORDER));
+        JTextField searchF = Components.styledField(""); searchF.setPreferredSize(new Dimension(280, 30));
         Components.StyledButton searchBtn = new Components.StyledButton("Buscar", Theme.BTN_INFO, Color.WHITE);
         searchBtn.setSmall();
         searchBtn.addActionListener(e -> filterTable(searchF.getText()));
         searchF.addActionListener(e -> filterTable(searchF.getText()));
         searchRow.add(new JLabel("Pesquisar:")); searchRow.add(searchF); searchRow.add(searchBtn);
 
-        tableModel = new DefaultTableModel(COLS,0){
-            @Override public boolean isCellEditable(int r,int c){return c==8;}
-            @Override public Class<?> getColumnClass(int c){return Object.class;}
+        tableModel = new DefaultTableModel(COLS, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return c == 8; }
+            @Override public Class<?> getColumnClass(int c) { return Object.class; }
         };
-        populateTable(SOURCE);
 
+        
         table = Components.buildTable(tableModel);
-        table.getColumnModel().getColumn(0).setPreferredWidth(30);
-        table.getColumnModel().getColumn(1).setPreferredWidth(230);
-        table.getColumnModel().getColumn(7).setPreferredWidth(90);
-        table.getColumnModel().getColumn(8).setPreferredWidth(130);
-        table.getColumnModel().getColumn(7).setCellRenderer(statusRenderer());
+        table.getColumnModel().getColumn(0).setPreferredWidth(40);   // #
+        table.getColumnModel().getColumn(1).setPreferredWidth(250);  // Titulo
+        table.getColumnModel().getColumn(2).setPreferredWidth(120);  // ISBN
+        table.getColumnModel().getColumn(3).setPreferredWidth(70);   // Ano
+        table.getColumnModel().getColumn(4).setPreferredWidth(120);  // Status
+        table.getColumnModel().getColumn(5).setPreferredWidth(120);  // Categoria
+        table.getColumnModel().getColumn(6).setPreferredWidth(180);  // Autor
+        table.getColumnModel().getColumn(7).setPreferredWidth(200);  // Editora
+        table.getColumnModel().getColumn(8).setPreferredWidth(180);  // Ações
+        table.getColumnModel().getColumn(4).setCellRenderer(statusRenderer());
         table.getColumnModel().getColumn(8).setCellRenderer(actionsRenderer());
         table.getColumnModel().getColumn(8).setCellEditor(new ActionsEditor(this));
 
@@ -64,89 +76,181 @@ public class PainelLivros extends JPanel {
         JPanel body = new JPanel(new BorderLayout()); body.setBackground(Color.WHITE);
         body.add(searchRow, BorderLayout.NORTH); body.add(sp, BorderLayout.CENTER);
         card.add(body, BorderLayout.CENTER);
+
+        refresh();
+        card.add(Components.cardHeader("Acervo de Livros (" + tableModel.getRowCount() + ")", addBtn), BorderLayout.NORTH);
         add(card, BorderLayout.CENTER);
     }
 
-    private void populateTable(Object[][] data) {
-        tableModel.setRowCount(0);
-        for(Object[] row:data)
-            tableModel.addRow(new Object[]{row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],"actions"});
-    }
-
-    private void filterTable(String q) {
-        tableModel.setRowCount(0);
-        for(Object[] row:SOURCE){
-            if(q.isBlank()||row[1].toString().toLowerCase().contains(q.toLowerCase())
-                ||row[2].toString().toLowerCase().contains(q.toLowerCase())
-                ||row[3].toString().toLowerCase().contains(q.toLowerCase()))
-                tableModel.addRow(new Object[]{row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],"actions"});
+    public void refresh() {
+        try {
+            List<Livro> livros = service.listarTodos();
+            populateTable(livros);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(frame, "Erro ao carregar livros:\n" + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private TableCellRenderer statusRenderer(){
-        return (t,v,sel,foc,r,c)->{
-            JPanel p=new JPanel(new FlowLayout(FlowLayout.LEFT,8,6));
-            p.setBackground(sel?Theme.ROW_HOVER:(r%2==0?Color.WHITE:Theme.ROW_ALT));
-            String val=v==null?"":v.toString();
-            p.add(val.equals("Emprestado")?Components.loanBadge(val):val.equals("atrasado")?Components.overBadge(val):Components.availBadge(val));
+    private void populateTable(List<Livro> livros) {
+        tableModel.setRowCount(0);
+        for (Livro l : livros) {
+            String autor = l.getNomeAutor() != null ? l.getNomeAutor() : "";
+            String cat   = l.getNomeCategoria() != null ? l.getNomeCategoria() : "";
+            String ano   = l.getAnoPublicacao() != null ? String.valueOf(l.getAnoPublicacao().getYear()) : "";
+            tableModel.addRow(new Object[]{l.getId(), l.getTitulo(), l.getIsbn(), ano, l.getStatus(), cat, autor, l.getNomeEditora(), "actions"});
+        }
+    }
+
+    private void filterTable(String q) {
+        try {
+            List<Livro> livros = q.isBlank() ? service.listarTodos() : service.buscar(q);
+            populateTable(livros);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(frame, "Erro na busca:\n" + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private TableCellRenderer statusRenderer() {
+        return (t, v, sel, foc, r, c) -> {
+            JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 6));
+            p.setBackground(sel ? Theme.ROW_HOVER : (r % 2 == 0 ? Color.WHITE : Theme.ROW_ALT));
+            String val = v == null ? "" : v.toString();
+            p.add("emprestado".equalsIgnoreCase(val) ? Components.loanBadge(val)
+                : "atrasado".equalsIgnoreCase(val)  ? Components.overBadge(val)
+                : Components.availBadge(val));
             return p;
         };
     }
 
-    private TableCellRenderer actionsRenderer(){
-        return (t,v,sel,foc,r,c)->{
-            JPanel p=new JPanel(new FlowLayout(FlowLayout.CENTER,4,4));
-            p.setBackground(sel?Theme.ROW_HOVER:(r%2==0?Color.WHITE:Theme.ROW_ALT));
-            Components.StyledButton edit=new Components.StyledButton("Editar",Theme.BTN_WARNING,Color.WHITE); edit.setSmall();
-            Components.StyledButton del=new Components.StyledButton("Excluir",Theme.BTN_DANGER,Color.WHITE); del.setSmall();
+    private TableCellRenderer actionsRenderer() {
+        return (t, v, sel, foc, r, c) -> {
+            JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 4));
+            p.setBackground(sel ? Theme.ROW_HOVER : (r % 2 == 0 ? Color.WHITE : Theme.ROW_ALT));
+            Components.StyledButton edit = new Components.StyledButton("Editar",  Theme.BTN_WARNING, Color.WHITE); edit.setSmall();
+            Components.StyledButton del  = new Components.StyledButton("Excluir", Theme.BTN_DANGER,  Color.WHITE); del.setSmall();
             p.add(edit); p.add(del); return p;
         };
     }
 
-    public void openForm(int row){
-        boolean isEdit=row>=0;
-        JDialog dlg=new JDialog(frame,isEdit?"Editar Livro":"Novo Livro",true);
-        dlg.setSize(440,400); dlg.setLocationRelativeTo(frame);
+    public void openForm(int row) {
+        boolean isEdit = row >= 0;
+        Livro livroEdit = null;
+        if (isEdit) {
+            int id = (int) tableModel.getValueAt(row, 0);
+            try { livroEdit = service.listarTodos().stream().filter(l -> l.getId() == id).findFirst().orElse(null); }
+            catch (Exception ignored) {}
+        }
+        final Livro le = livroEdit;
+
+        JDialog dlg = new JDialog(frame, isEdit ? "Editar Livro" : "Novo Livro", true);
+        dlg.setSize(460, 470); dlg.setLocationRelativeTo(frame);
         dlg.getContentPane().setBackground(Color.WHITE);
-        JPanel form=new JPanel(new GridBagLayout());
-        form.setBackground(Color.WHITE); form.setBorder(new EmptyBorder(20,24,20,24));
-        GridBagConstraints gbc=new GridBagConstraints();
-        gbc.fill=GridBagConstraints.HORIZONTAL; gbc.weightx=1; gbc.insets=new Insets(3,0,3,0);
-        JTextField fTitulo=Components.styledField(""); JTextField fAutor=Components.styledField("");
-        JTextField fGenero=Components.styledField(""); JTextField fAno=Components.styledField("");
-        JTextField fCopias=Components.styledField("");
-        if(isEdit){fTitulo.setText(tableModel.getValueAt(row,1).toString());fAutor.setText(tableModel.getValueAt(row,2).toString());fGenero.setText(tableModel.getValueAt(row,3).toString());fAno.setText(tableModel.getValueAt(row,4).toString());fCopias.setText(tableModel.getValueAt(row,5).toString());}
-        String[] labels={"Titulo *","Autor *","Genero","Ano","Total de copias *"};
-        JTextField[] fields={fTitulo,fAutor,fGenero,fAno,fCopias};
-        for(int i=0;i<labels.length;i++){gbc.gridy=i*2;form.add(Components.formLabel(labels[i]),gbc);gbc.gridy=i*2+1;form.add(fields[i],gbc);}
-        gbc.gridy=labels.length*2+1; gbc.insets=new Insets(14,0,0,0);
-        Components.StyledButton saveBtn=new Components.StyledButton(isEdit?"Atualizar":"Salvar",Theme.BTN_PRIMARY,Color.WHITE);
-        saveBtn.setPreferredSize(new Dimension(Integer.MAX_VALUE,36));
-        saveBtn.addActionListener(e->{
-            if(fTitulo.getText().isBlank()||fAutor.getText().isBlank()||fCopias.getText().isBlank()){JOptionPane.showMessageDialog(dlg,"Preencha os campos obrigatorios.","Atencao",JOptionPane.WARNING_MESSAGE);return;}
-            JOptionPane.showMessageDialog(dlg,isEdit?"Livro atualizado!":"Livro cadastrado!","Sucesso",JOptionPane.INFORMATION_MESSAGE); dlg.dispose();
+        JPanel form = new JPanel(new GridBagLayout());
+        form.setBackground(Color.WHITE); form.setBorder(new EmptyBorder(20, 24, 20, 24));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1; gbc.insets = new Insets(3, 0, 3, 0);
+
+        JTextField fTitulo = Components.styledField("");
+        JTextField fIsbn   = Components.styledField("");
+        JTextField fAno = Components.styledField("DD/MM/AAAA");
+
+        //Chaves FK de (autor, categoria, editora)
+        List<Autor>     autores    = List.of();
+        List<Categoria> categorias = List.of();
+        List<Editora>   editoras   = List.of();
+        try { autores    = autorSvc.listarTodos();   } catch (Exception ignored) {}
+        try { categorias = catSvc.listarTodos();     } catch (Exception ignored) {}
+        try { editoras   = editoraSvc.listarTodos(); } catch (Exception ignored) {}
+
+        String[] autorItems = autores.stream().map(a -> a.getId() + " - " + a.getNome()).toArray(String[]::new);
+        String[] catItems   = categorias.stream().map(c -> c.getId() + " - " + c.getNome()).toArray(String[]::new);
+        String[] edItems    = editoras.stream().map(e -> e.getId() + " - " + e.getNome()).toArray(String[]::new);
+        JComboBox<String> cAutor = Components.styledCombo(autorItems.length > 0 ? autorItems : new String[]{"(nenhum)"});
+        JComboBox<String> cCat   = Components.styledCombo(catItems.length   > 0 ? catItems   : new String[]{"(nenhum)"});
+        JComboBox<String> cEdit  = Components.styledCombo(edItems.length    > 0 ? edItems    : new String[]{"(nenhum)"});
+        JComboBox<String> cStatus = Components.styledCombo(new String[]{"disponível", "emprestado"});
+        cStatus.setEnabled(false);
+
+        if (isEdit && le != null) {
+            fTitulo.setText(le.getTitulo());
+            fIsbn.setText(String.valueOf(le.getIsbn()));
+            fAno.setText(le.getAnoPublicacao() != null ? le.getAnoPublicacao().format(FORMATO_BR) : "");
+            cStatus.setSelectedItem(le.getStatus());
+            for (int i = 0; i < autores.size(); i++) if (autores.get(i).getId() == le.getIdAutor()) { cAutor.setSelectedIndex(i); break; }
+            for (int i = 0; i < categorias.size(); i++) if (categorias.get(i).getId() == le.getIdCategoria()) { cCat.setSelectedIndex(i); break; }
+            for (int i = 0; i < editoras.size(); i++) if (editoras.get(i).getId() == le.getIdEditora()) { cEdit.setSelectedIndex(i); break; }
+        }
+
+        String[] labels = {"Titulo *", "ISBN", "Ano publicacao (DD/MM/AAAA)", "Status", "Categoria", "Autor *", "Editora"};
+        java.awt.Component[] flds = {fTitulo, fIsbn, fAno, cStatus, cCat, cAutor, cEdit};
+        for (int i = 0; i < labels.length; i++) {
+            gbc.gridy = i * 2;     form.add(Components.formLabel(labels[i]), gbc);
+            gbc.gridy = i * 2 + 1; form.add(flds[i], gbc);
+        }
+        gbc.gridy = labels.length * 2 + 1; gbc.insets = new Insets(14, 0, 0, 0);
+        Components.StyledButton saveBtn = new Components.StyledButton(isEdit ? "Atualizar" : "Salvar", Theme.BTN_PRIMARY, Color.WHITE);
+        saveBtn.setPreferredSize(new Dimension(Integer.MAX_VALUE, 36));
+
+        final List<Autor>     autoresFinal    = autores;
+        final List<Categoria> categoriasFinal = categorias;
+        final List<Editora>   editorasFinal   = editoras;
+
+        saveBtn.addActionListener(e -> {
+            if (fTitulo.getText().isBlank()) {
+                JOptionPane.showMessageDialog(dlg, "Preencha os campos obrigatorios.", "Atencao", JOptionPane.WARNING_MESSAGE); return;
+            }
+            try {
+                Livro l = (isEdit && le != null) ? le : new Livro();
+                l.setTitulo(fTitulo.getText().trim());
+                l.setIsbn(fIsbn.getText().trim());
+                l.setStatus((String) cStatus.getSelectedItem());
+                DateTimeFormatter formatoBR = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                l.setAnoPublicacao(fAno.getText().isBlank() ? null : LocalDate.parse(fAno.getText().trim(), formatoBR));
+                if (!autoresFinal.isEmpty())    l.setIdAutor    (autoresFinal.get(cAutor.getSelectedIndex()).getId());
+                if (!categoriasFinal.isEmpty()) l.setIdCategoria(categoriasFinal.get(cCat.getSelectedIndex()).getId());
+                if (!editorasFinal.isEmpty())   l.setIdEditora  (editorasFinal.get(cEdit.getSelectedIndex()).getId());
+                if (isEdit) service.atualizar(l); else service.cadastrar(l);
+                refresh();
+                frame.painelEstoque.refresh();
+                frame.painelDashboard.refresh();
+                JOptionPane.showMessageDialog(dlg, isEdit ? "Livro atualizado!" : "Livro cadastrado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                dlg.dispose(); 
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(dlg, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         });
-        form.add(saveBtn,gbc); dlg.add(form); dlg.setVisible(true);
+        form.add(saveBtn, gbc); dlg.add(form); dlg.setVisible(true);
     }
 
-    public void confirmDelete(int row){
-        String titulo=tableModel.getValueAt(row,1).toString();
-        int opt=JOptionPane.showConfirmDialog(frame,"Excluir \""+titulo+"\"?","Confirmar",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
-        if(opt==JOptionPane.YES_OPTION){tableModel.removeRow(row);JOptionPane.showMessageDialog(frame,"Excluido!","OK",JOptionPane.INFORMATION_MESSAGE);}
+    public void confirmDelete(int row) {
+        int id = (int) tableModel.getValueAt(row, 0);
+        String titulo = tableModel.getValueAt(row, 1).toString();
+        int opt = JOptionPane.showConfirmDialog(frame, "Excluir \"" + titulo + "\"?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (opt == JOptionPane.YES_OPTION) {
+            try {
+                service.excluir(id);
+                refresh();
+                frame.painelEstoque.refresh();
+                frame.painelDashboard.refresh();
+                JOptionPane.showMessageDialog(frame, "Excluido!", "OK", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, "Erro ao excluir:\n" + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     static class ActionsEditor extends DefaultCellEditor {
         private JPanel panel; private final PainelLivros owner; private int currentRow;
-        ActionsEditor(PainelLivros owner){
-            super(new JCheckBox()); this.owner=owner; setClickCountToStart(1);
-            panel=new JPanel(new FlowLayout(FlowLayout.CENTER,4,4)); panel.setBackground(Theme.ROW_HOVER);
-            Components.StyledButton edit=new Components.StyledButton("Editar",Theme.BTN_WARNING,Color.WHITE); edit.setSmall();
-            Components.StyledButton del=new Components.StyledButton("Excluir",Theme.BTN_DANGER,Color.WHITE); del.setSmall();
-            edit.addActionListener(e->{fireEditingStopped();owner.openForm(currentRow);});
-            del.addActionListener(e->{fireEditingStopped();owner.confirmDelete(currentRow);});
+        ActionsEditor(PainelLivros owner) {
+            super(new JCheckBox()); this.owner = owner; setClickCountToStart(1);
+            panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 4)); panel.setBackground(Theme.ROW_HOVER);
+            Components.StyledButton edit = new Components.StyledButton("Editar",  Theme.BTN_WARNING, Color.WHITE); edit.setSmall();
+            Components.StyledButton del  = new Components.StyledButton("Excluir", Theme.BTN_DANGER,  Color.WHITE); del.setSmall();
+            edit.addActionListener(e -> { fireEditingStopped(); owner.openForm(currentRow); });
+            del .addActionListener(e -> { fireEditingStopped(); owner.confirmDelete(currentRow); });
             panel.add(edit); panel.add(del);
         }
-        @Override public Component getTableCellEditorComponent(JTable t,Object v,boolean sel,int r,int c){currentRow=r;return panel;}
-        @Override public Object getCellEditorValue(){return"actions";}
+        @Override public Component getTableCellEditorComponent(JTable t, Object v, boolean sel, int r, int c) { currentRow = r; return panel; }
+        @Override public Object getCellEditorValue() { return "actions"; }
     }
 }

@@ -1,51 +1,58 @@
 package br.com.biblioteca.model;
 
+import java.time.LocalDate;
 
-//Entidade Livro — mapeia a tabela livro do banco de dados.
+//Entidade Livro — Mapeia a tabela livro
 public class Livro {
 
-    private int    id;
-    private String titulo;
-    private String autor;
-    private String genero;
-    private int    ano;
-    private int    totalCopias;
-    private int    copiasDisponiveis;
+    private int       id;
+    private String    titulo;
+    private String    isbn;
+    private LocalDate anoPublicacao;
+    private String    status;        //disponível | emprestado
+    private int       idCategoria;
+    private int       idAutor;
+    private int       idEditora;
+
+
+    private String nomeAutor;
+    private String nomeCategoria;
+    private String nomeEditora;
 
     public Livro() {}
 
-    public Livro(int id, String titulo, String autor, String genero,
-                 int ano, int totalCopias, int copiasDisponiveis) {
-        this.id                = id;
-        this.titulo            = titulo;
-        this.autor             = autor;
-        this.genero            = genero;
-        this.ano               = ano;
-        this.totalCopias       = totalCopias;
-        this.copiasDisponiveis = copiasDisponiveis;
-    }
+    public int       getId()                   { return id; }
+    public void      setId(int id)             { this.id = id; }
 
-    //Getters e Setters 
-    public int    getId()                 { return id; }
-    public void   setId(int id)           { this.id = id; }
+    public String    getTitulo()               { return titulo; }
+    public void      setTitulo(String t)       { this.titulo = t; }
 
-    public String getTitulo()             { return titulo; }
-    public void   setTitulo(String t)     { this.titulo = t; }
+    public String    getIsbn()                 { return isbn; }
+    public void      setIsbn(String isbn)      { this.isbn = isbn; }
 
-    public String getAutor()              { return autor; }
-    public void   setAutor(String a)      { this.autor = a; }
+    public LocalDate getAnoPublicacao()        { return anoPublicacao; }
+    public void      setAnoPublicacao(LocalDate a) { this.anoPublicacao = a; }
 
-    public String getGenero()             { return genero; }
-    public void   setGenero(String g)     { this.genero = g; }
+    public String    getStatus()               { return status; }
+    public void      setStatus(String s)       { this.status = s; }
 
-    public int    getAno()                { return ano; }
-    public void   setAno(int ano)         { this.ano = ano; }
+    public int       getIdCategoria()          { return idCategoria; }
+    public void      setIdCategoria(int c)     { this.idCategoria = c; }
 
-    public int    getTotalCopias()        { return totalCopias; }
-    public void   setTotalCopias(int t)   { this.totalCopias = t; }
+    public int       getIdAutor()              { return idAutor; }
+    public void      setIdAutor(int a)         { this.idAutor = a; }
 
-    public int    getCopiasDisponiveis()  { return copiasDisponiveis; }
-    public void   setCopiasDisponiveis(int c) { this.copiasDisponiveis = c; }
+    public int       getIdEditora()            { return idEditora; }
+    public void      setIdEditora(int e)       { this.idEditora = e; }
 
-    @Override public String toString() { return titulo; }
+    public String    getNomeAutor()            { return nomeAutor; }
+    public void      setNomeAutor(String n)    { this.nomeAutor = n; }
+
+    public String    getNomeCategoria()        { return nomeCategoria; }
+    public void      setNomeCategoria(String n){ this.nomeCategoria = n; }
+
+    public String    getNomeEditora()          { return nomeEditora; }
+    public void      setNomeEditora(String n)  { this.nomeEditora = n; }
+
+    @Override public String toString()         { return titulo; }
 }

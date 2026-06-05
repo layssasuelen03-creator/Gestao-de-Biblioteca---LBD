@@ -52,7 +52,7 @@ public class Components {
         }
     }
 
-    // Badge
+    //Badge
     public static class Badge extends JLabel {
         public Badge(String text, Color bg, Color fg) {
             super(text, CENTER); setFont(Theme.bold(11)); setForeground(fg);
@@ -133,7 +133,6 @@ public class Components {
         };
         ico.setOpaque(false); ico.setPreferredSize(new Dimension(30,30));
         ico.setMaximumSize(new Dimension(30,30));
-        // FIX: use Component.LEFT_ALIGNMENT (float constant) correctly
         ico.setAlignmentX(Component.LEFT_ALIGNMENT);
         p.add(ico); p.add(Box.createVerticalStrut(6));
 

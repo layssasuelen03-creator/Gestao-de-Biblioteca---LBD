@@ -6,7 +6,9 @@ create table usuario (
 	id_usuario int auto_increment primary key,
 	nome varchar(100) not null,
 	email varchar(100) not null,
-	telefone varchar(15) not null
+	telefone varchar(15) not null,
+	senha varchar(255),
+	status varchar(20) default 'ativo'
 );
 
 create table autor(
@@ -31,7 +33,7 @@ create table editora (
 create table livro(
 	id_livro int auto_increment primary key,
 	titulo varchar(100) not null,
-	ISBN int not null,
+	ISBN varchar(20) not null, 
 	ano_publicacao date not null,
 	status varchar(100) not null,
 	id_categoria int not null,
@@ -51,10 +53,10 @@ create table livro_autor(
 );
 
 create table emprestimo(
-	ed_emprestimo int  auto_increment primary key ,
+	id_emprestimo int  auto_increment primary key,
 	data_emprestimo date not null,
 	data_prevista_devolucao date not null,
-	data_devolucao date not null,
+	data_devolucao date null,
 	status varchar(100) not null,
 	id_usuario int not null,
 	id_livro int not null,

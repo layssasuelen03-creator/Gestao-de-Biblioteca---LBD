@@ -7,29 +7,36 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+//Tabela livro 
 public class LivroDAO {
 
-    //CREATE 
     public void inserir(Livro l) throws SQLException {
-        String sql = "INSERT INTO livros (titulo, autor, genero, ano, total_copias, copias_disponiveis) "
-                   + "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO livro (titulo, ISBN, ano_publicacao, status, id_categoria, id_autor, id_editora) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, l.getTitulo());
-            ps.setString(2, l.getAutor());
-            ps.setString(3, l.getGenero());
-            ps.setInt   (4, l.getAno());
-            ps.setInt   (5, l.getTotalCopias());
-            ps.setInt   (6, l.getCopiasDisponiveis());
+            ps.setString(2, l.getIsbn());
+            ps.setDate  (3, l.getAnoPublicacao() != null ? Date.valueOf(l.getAnoPublicacao()) : null);
+            ps.setString(4, l.getStatus() != null ? l.getStatus() : "disponível");
+            ps.setInt   (5, l.getIdCategoria());
+            ps.setInt   (6, l.getIdAutor());
+            ps.setInt   (7, l.getIdEditora());
             ps.executeUpdate();
         }
     }
 
-    //READ 
     public List<Livro> listarTodos() throws SQLException {
         List<Livro> lista = new ArrayList<>();
-        String sql = "SELECT * FROM livros ORDER BY titulo";
+        String sql =
+            "SELECT l.id_livro, l.titulo, l.ISBN, l.ano_publicacao, l.status, " +
+            "       l.id_categoria, l.id_autor, l.id_editora, " +
+            "       a.nome AS nome_autor, cat.nome AS nome_categoria, e.nome AS nome_editora " +
+            "FROM livro l " +
+            "LEFT JOIN autor    a   ON l.id_autor     = a.id_autor " +
+            "LEFT JOIN categoria cat ON l.id_categoria = cat.id_Categoria " +
+            "LEFT JOIN editora  e   ON l.id_editora   = e.id_editora " +
+            "ORDER BY l.titulo";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -40,9 +47,16 @@ public class LivroDAO {
 
     public List<Livro> buscar(String termo) throws SQLException {
         List<Livro> lista = new ArrayList<>();
-        String sql = "SELECT * FROM livros "
-                   + "WHERE titulo LIKE ? OR autor LIKE ? OR genero LIKE ? "
-                   + "ORDER BY titulo";
+        String sql =
+            "SELECT l.id_livro, l.titulo, l.ISBN, l.ano_publicacao, l.status, " +
+            "       l.id_categoria, l.id_autor, l.id_editora, " +
+            "       a.nome AS nome_autor, cat.nome AS nome_categoria, e.nome AS nome_editora " +
+            "FROM livro l " +
+            "LEFT JOIN autor    a   ON l.id_autor     = a.id_autor " +
+            "LEFT JOIN categoria cat ON l.id_categoria = cat.id_Categoria " +
+            "LEFT JOIN editora  e   ON l.id_editora   = e.id_editora " +
+            "WHERE l.titulo LIKE ? OR a.nome LIKE ? OR cat.nome LIKE ? " +
+            "ORDER BY l.titulo";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             String t = "%" + termo + "%";
@@ -55,7 +69,15 @@ public class LivroDAO {
     }
 
     public Livro buscarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM livros WHERE id = ?";
+        String sql =
+            "SELECT l.id_livro, l.titulo, l.ISBN, l.ano_publicacao, l.status, " +
+            "       l.id_categoria, l.id_autor, l.id_editora, " +
+            "       a.nome AS nome_autor, cat.nome AS nome_categoria, e.nome AS nome_editora " +
+            "FROM livro l " +
+            "LEFT JOIN autor    a   ON l.id_autor     = a.id_autor " +
+            "LEFT JOIN categoria cat ON l.id_categoria = cat.id_Categoria " +
+            "LEFT JOIN editora  e   ON l.id_editora   = e.id_editora " +
+            "WHERE l.id_livro = ?";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -66,26 +88,35 @@ public class LivroDAO {
         return null;
     }
 
-    //UPDATE 
     public void atualizar(Livro l) throws SQLException {
-        String sql = "UPDATE livros SET titulo=?, autor=?, genero=?, ano=?, "
-                   + "total_copias=?, copias_disponiveis=? WHERE id=?";
+        String sql = "UPDATE livro SET titulo = ?, ISBN = ?, ano_publicacao = ?, status = ?, " +
+                     "id_categoria = ?, id_autor = ?, id_editora = ? WHERE id_livro = ?";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, l.getTitulo());
-            ps.setString(2, l.getAutor());
-            ps.setString(3, l.getGenero());
-            ps.setInt   (4, l.getAno());
-            ps.setInt   (5, l.getTotalCopias());
-            ps.setInt   (6, l.getCopiasDisponiveis());
-            ps.setInt   (7, l.getId());
+            ps.setString(2, l.getIsbn());
+            ps.setDate  (3, l.getAnoPublicacao() != null ? Date.valueOf(l.getAnoPublicacao()) : null);
+            ps.setString(4, l.getStatus());
+            ps.setInt   (5, l.getIdCategoria());
+            ps.setInt   (6, l.getIdAutor());
+            ps.setInt   (7, l.getIdEditora());
+            ps.setInt   (8, l.getId());
             ps.executeUpdate();
         }
     }
 
-    //DELETE 
+    public void atualizarStatus(int id, String status) throws SQLException {
+        String sql = "UPDATE livro SET status = ? WHERE id_livro = ?";
+        try (Connection c = ConnectionFactory.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt   (2, id);
+            ps.executeUpdate();
+        }
+    }
+
     public void excluir(int id) throws SQLException {
-        String sql = "DELETE FROM livros WHERE id = ?";
+        String sql = "DELETE FROM livro WHERE id_livro = ?";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -93,9 +124,8 @@ public class LivroDAO {
         }
     }
 
-    //Contagem 
     public int contarTotal() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM livros";
+        String sql = "SELECT COUNT(*) FROM livro";
         try (Connection c = ConnectionFactory.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -104,16 +134,30 @@ public class LivroDAO {
         return 0;
     }
 
-    //Mapper 
+    public int contarDisponiveis() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM livro WHERE status = 'disponível'";
+        try (Connection c = ConnectionFactory.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        }
+        return 0;
+    }
+
     private Livro mapear(ResultSet rs) throws SQLException {
-        return new Livro(
-            rs.getInt   ("id"),
-            rs.getString("titulo"),
-            rs.getString("autor"),
-            rs.getString("genero"),
-            rs.getInt   ("ano"),
-            rs.getInt   ("total_copias"),
-            rs.getInt   ("copias_disponiveis")
-        );
+        Livro l = new Livro();
+        l.setId           (rs.getInt   ("id_livro"));
+        l.setTitulo       (rs.getString("titulo"));
+        l.setIsbn         (rs.getString("ISBN"));
+        Date d = rs.getDate("ano_publicacao");
+        if (d != null) l.setAnoPublicacao(d.toLocalDate());
+        l.setStatus       (rs.getString("status"));
+        l.setIdCategoria  (rs.getInt   ("id_categoria"));
+        l.setIdAutor      (rs.getInt   ("id_autor"));
+        l.setIdEditora    (rs.getInt   ("id_editora"));
+        l.setNomeAutor    (rs.getString("nome_autor"));
+        l.setNomeCategoria(rs.getString("nome_categoria"));
+        l.setNomeEditora  (rs.getString("nome_editora"));
+        return l;
     }
 }

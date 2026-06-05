@@ -16,7 +16,8 @@ public class TelaPrincipal extends JFrame {
     public PainelDashboard   painelDashboard;
     public PainelLivros      painelLivros;
     public PainelAutores     painelAutores;
-    public PainelGeneros     painelGeneros;
+    public PainelCategoria   painelCategoria;
+    public PainelEditoras    painelEditoras;
     public PainelUsuarios    painelUsuarios;
     public PainelEmprestimos painelEmprestimos;
     public PainelDevolucoes  painelDevolucoes;
@@ -79,7 +80,9 @@ public class TelaPrincipal extends JFrame {
         addSection(sidebar, "Acervo");
         addNav(sidebar, "  Livros",       "livros");
         addNav(sidebar, "  Autores",      "autores");
-        addNav(sidebar, "  Generos",      "generos");
+        addNav(sidebar, "  Categorias",   "categorias");
+        addNav(sidebar, "  Editoras",     "editoras");
+
 
         addSection(sidebar, "Membros");
         addNav(sidebar, "  Usuarios",     "usuarios");
@@ -89,8 +92,7 @@ public class TelaPrincipal extends JFrame {
         addSection(sidebar, "Gestao");
         addNav(sidebar, "  Estoque",      "estoque");
         addNav(sidebar, "  Relatorios",   "relatorios");
-
-    //Glue (empurra footer para baixo) 
+ 
     sidebar.add(Box.createVerticalGlue());
 
 //Botão SAIR 
@@ -145,7 +147,7 @@ footer.setLayout(new BoxLayout(footer, BoxLayout.Y_AXIS));
 footer.setBorder(new EmptyBorder(10, 12, 10, 12));
 footer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 
-// linha superior: avatar + nome/login
+//linha superior: avatar + nome/login
 JPanel userRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
 userRow.setOpaque(false);
 
@@ -292,7 +294,8 @@ return sidebar;
         painelDashboard   = new PainelDashboard(this);
         painelLivros      = new PainelLivros(this);
         painelAutores     = new PainelAutores(this);
-        painelGeneros     = new PainelGeneros(this);
+        painelCategoria   = new PainelCategoria(this);
+        painelEditoras    = new PainelEditoras(this);
         painelUsuarios    = new PainelUsuarios(this);
         painelEmprestimos = new PainelEmprestimos(this);
         painelDevolucoes  = new PainelDevolucoes(this);
@@ -303,7 +306,8 @@ return sidebar;
         contentArea.add(painelDashboard,   "dashboard");
         contentArea.add(painelLivros,      "livros");
         contentArea.add(painelAutores,     "autores");
-        contentArea.add(painelGeneros,     "generos");
+        contentArea.add(painelCategoria,   "categorias");
+        contentArea.add(painelEditoras,    "editoras");
         contentArea.add(painelUsuarios,    "usuarios");
         contentArea.add(painelEmprestimos, "emprestimos");
         contentArea.add(painelDevolucoes,  "devolucoes");
@@ -322,7 +326,8 @@ return sidebar;
             case "dashboard":   pgTitle.setText("Dashboard");    pgSub.setText("Bem-vindo(a) de volta!"); break;
             case "livros":      pgTitle.setText("Livros");       pgSub.setText("Gerencie o acervo de livros"); break;
             case "autores":     pgTitle.setText("Autores");      pgSub.setText("Cadastro de autores"); break;
-            case "generos":     pgTitle.setText("Generos");      pgSub.setText("Categorias do acervo"); break;
+            case "categorias":  pgTitle.setText("Categorias");   pgSub.setText("Categorias do acervo"); break;
+            case "editoras":    pgTitle.setText("Editoras");     pgSub.setText("Cadastro de editoras"); break;
             case "usuarios":    pgTitle.setText("Usuarios");     pgSub.setText("Cadastro de usuarios"); break;
             case "emprestimos": pgTitle.setText("Emprestimos");  pgSub.setText("Controle de emprestimos"); break;
             case "devolucoes":  pgTitle.setText("Devolucoes");   pgSub.setText("Registrar devolucoes"); break;
@@ -361,7 +366,7 @@ public static class NavItem extends JPanel {
 
         setBorder(new EmptyBorder(0, 12, 0, 0));
 
-        // ÍCONES
+        //ÍCONES
         String icon;
 
         switch (view) {
@@ -378,8 +383,12 @@ public static class NavItem extends JPanel {
                 icon = "👤";
                 break;
 
-            case "generos":
+            case "categorias":
                 icon = "🏷";
+                break;
+            
+            case "editoras":
+                icon = "🏢";
                 break;
 
             case "usuarios":
