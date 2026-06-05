@@ -11,7 +11,7 @@ public class ConnectionFactory {
     private static final String URL      = "jdbc:mysql://localhost:3306/biblioteca"
                                          + "?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private static final String USER     = "root";
-    private static final String PASSWORD = "Layssa01*";   // sua senha do MySQL
+    private static final String PASSWORD = "";   // sua senha do MySQL
 
     private ConnectionFactory() {}
 
