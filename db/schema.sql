@@ -1,5 +1,3 @@
-create schema biblioteca;
-
 use biblioteca;
 
 create table usuario (
