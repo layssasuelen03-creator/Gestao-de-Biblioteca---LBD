@@ -27,18 +27,7 @@ public class PainelRelatorios extends JPanel {
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(18, 18, 18, 18));
 
-        carregarDados();
-
-        JPanel inner = new JPanel();
-        inner.setOpaque(false);
-        inner.setLayout(new BoxLayout(inner, BoxLayout.Y_AXIS));
-
-        inner.add(buildStatRow());
-        inner.add(Box.createVerticalStrut(16));
-        inner.add(buildChartsRow());
-        inner.add(Box.createVerticalStrut(18));
-
-        add(inner, BorderLayout.NORTH);
+        refresh();
     }
 
     private void carregarDados() {
@@ -226,4 +215,25 @@ public class PainelRelatorios extends JPanel {
                 BorderLayout.EAST);
         return row;
     }
+
+    public void refresh() {
+        removeAll();
+
+        carregarDados();
+
+         JPanel inner = new JPanel();
+         inner.setOpaque(false);
+         inner.setLayout(new BoxLayout(inner, BoxLayout.Y_AXIS));
+
+         inner.add(buildStatRow());
+         inner.add(Box.createVerticalStrut(16));
+         inner.add(buildChartsRow());
+         inner.add(Box.createVerticalStrut(18));
+
+         add(inner, BorderLayout.NORTH);
+
+        revalidate();
+        repaint();
+
+   }
 }

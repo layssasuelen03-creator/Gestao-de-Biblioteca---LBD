@@ -213,6 +213,7 @@ public class PainelLivros extends JPanel {
                 refresh();
                 frame.painelEstoque.refresh();
                 frame.painelDashboard.refresh();
+                frame.painelRelatorios.refresh();
                 JOptionPane.showMessageDialog(dlg, isEdit ? "Livro atualizado!" : "Livro cadastrado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                 dlg.dispose(); 
             } catch (Exception ex) {
@@ -232,6 +233,7 @@ public class PainelLivros extends JPanel {
                 refresh();
                 frame.painelEstoque.refresh();
                 frame.painelDashboard.refresh();
+                frame.painelRelatorios.refresh();
                 JOptionPane.showMessageDialog(frame, "Excluido!", "OK", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame, "Erro ao excluir:\n" + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);

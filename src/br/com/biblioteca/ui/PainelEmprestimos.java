@@ -132,6 +132,7 @@ public class PainelEmprestimos extends JPanel {
                 frame.painelLivros.refresh();
                 frame.painelEstoque.refresh();
                 frame.painelDashboard.refresh();
+                frame.painelRelatorios.refresh();
                 JOptionPane.showMessageDialog(dlg, "Empréstimo registrado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                 dlg.dispose(); 
             } catch (DateTimeParseException ex) {

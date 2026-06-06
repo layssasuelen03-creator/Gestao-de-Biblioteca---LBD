@@ -161,7 +161,7 @@ JLabel nameL = new JLabel("Administrador");
 nameL.setFont(Theme.bold(12));
 nameL.setForeground(Color.WHITE);
 
-JLabel roleL = new JLabel("Login / Cadastro");
+JLabel roleL = new JLabel("Login");
 roleL.setFont(Theme.plain(11));
 roleL.setForeground(Theme.SIDEBAR_TEXT);
 
@@ -332,7 +332,7 @@ return sidebar;
             case "emprestimos": pgTitle.setText("Emprestimos");  pgSub.setText("Controle de emprestimos"); break;
             case "devolucoes":  pgTitle.setText("Devolucoes");   pgSub.setText("Registrar devolucoes"); break;
             case "estoque":     pgTitle.setText("Estoque");      pgSub.setText("Controle de estoque"); break;
-            case "relatorios":  pgTitle.setText("Relatorios");   pgSub.setText("Relatorios e estatisticas"); break;
+            case "relatorios":  pgTitle.setText("Relatorios");   pgSub.setText("Relatorios e estatisticas"); pgSub.setText("Relatorios e estatisticas"); break;
             case "login":       pgTitle.setText("Acesso");       pgSub.setText("Entre na sua conta"); break;
         }
     }

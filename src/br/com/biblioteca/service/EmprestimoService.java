@@ -36,7 +36,8 @@ public class EmprestimoService {
         } catch (SQLException e) {
             throw new SQLException("Erro ao registrar a devolução no banco de dados. Tente novamente.");
         }
-}
+    }
+
 
     public List<Emprestimo> listarTodos() throws SQLException {
         return dao.listarTodos();

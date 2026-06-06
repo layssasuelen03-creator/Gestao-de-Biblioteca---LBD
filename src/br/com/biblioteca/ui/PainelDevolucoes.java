@@ -80,6 +80,7 @@ public class PainelDevolucoes extends JPanel {
                     frame.painelDashboard.refresh();
                     frame.painelEstoque.refresh();
                     frame.painelLivros.refresh(); 
+                    frame.painelRelatorios.refresh();
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(frame, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
