@@ -31,20 +31,19 @@ JDK 17 ou superior
 
 O Java é responsável por:
 
-Executar a aplicação
-Compilar o projeto
-Fornecer suporte ao Java Swing
-Verificar instalação do Java
+- Executar a aplicação
+- Compilar o projeto
+- Fornecer suporte ao Java Swing
+- Verificar instalação do Java
 
-Abra o terminal e execute:
+Para verificar se o Java já está na máquina, abra o terminal e execute:
 
-java -version
+`java -version`
+e também:
+`javac -version`
 
-E:
-
-javac -version
-
-Se aparecer a versão instalada, o Java está funcionando corretamente.
+Se aparecer a versão instalada (por exemplo, `openjdk version "21.0.8"` e `javac 21.0.8`), o Java está instalado e funcionando corretamente.
+Caso não esteja instalado, [clique aqui para baixar o JDK](https://www.oracle.com/br/java/technologies/downloads/)
 
 <br>
 
@@ -53,7 +52,9 @@ Se aparecer a versão instalada, o Java está funcionando corretamente.
 Para desenvolver ou editar o projeto, recomenda-se utilizar:
 
 - Visual Studio Code
-- Extensões necessárias:
+
+Além disso, recomenda-se instalar as extensões abaixo no VS Code:
+
 - Extension Pack for Java
 - Debugger for Java
 - Language Support for Java
@@ -64,9 +65,7 @@ Para desenvolver ou editar o projeto, recomenda-se utilizar:
 
 O projeto utiliza integração com banco de dados MySQL.
 
-Instale:
-
-MySQL Server
+Verifique se o MySQL Server está instalado com `mysql --version`. Caso não esteja, baixe [aqui](https://dev.mysql.com/downloads/mysql/)
 
 <br>
 
@@ -74,9 +73,8 @@ MySQL Server
 
 Também é necessário adicionar o driver JDBC do MySQL no projeto.
 
-Arquivo necessário:
-
-mysql-connector-j-x.x.x.jar
+O arquivo necessário `mysql-connector-j-x.x.x.jar` pode ser baixado [aqui](https://dev.mysql.com/downloads/connector/j/)
+Para Windows, escolha "Platform Independent".
 
 O arquivo deve ser colocado na pasta:
 
@@ -86,8 +84,23 @@ lib/
 
 ✅ **Executando o Sistema**
 
-Após configurar tudo:
+Após baixar todos os softwares, drivers e extensões necessárias, é hora de executar o programa. Siga os passos abaixo:
 
-- Abra o projeto no VS Code
-- Configure o banco de dados
-- Execute a classe:
+1. Abra o MySQL Workbench e execute todo o conteúdo de `schema.sql`.
+2. Configure a conexão com o banco:
+   Abra o arquivo `src/br/biblioteca/connection/ConnectionFactory.java` e altere as configurações.
+   `private static final String USER = "root";        // Seu usuário do MySQL
+   private static final String PASSWORD = "";        // SUA SENHA DO MYSQL AQUI!`
+   Coloque em PASSWORD a senha que definiu ao instalar o MySQL.
+   
+4. Execute o sistema:
+   Para isso, existem duas opções.
+   Pela IDE -descrever como fazer pela ide-, ou
+   Pelo terminal:
+   Compile com `javac -cp ` e em seguida
+   execute com 
+
+
+
+
+
