@@ -89,7 +89,7 @@ Após baixar todos os softwares, drivers e extensões necessárias, é hora de e
 1. Abra o MySQL Workbench e execute todo o conteúdo de `schema.sql`.
 2. Configure a conexão com o banco:
    Abra o arquivo `src/br/biblioteca/connection/ConnectionFactory.java` e altere as configurações.
-   `private static final String USER = "root";        // Seu usuário do MySQL`
+   `private static final String USER = "root";        // Seu usuário do MySQL` <br>
    `private static final String PASSWORD = "";        // SUA SENHA DO MYSQL AQUI!`
    Coloque em PASSWORD a senha que definiu ao instalar o MySQL.
    
