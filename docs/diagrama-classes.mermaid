@@ -1,0 +1,502 @@
+classDiagram
+    %% ========================
+    %% MODEL (Entidades)
+    %% ========================
+    class Autor {
+        -int id
+        -String nome
+        -String nacionalidade
+        +getId() int
+        +getNome() String
+        +getNacionalidade() String
+        +setId(int)
+        +setNome(String)
+        +setNacionalidade(String)
+    }
+
+    class Categoria {
+        -int id
+        -String nome
+        -String descricao
+        +getId() int
+        +getNome() String
+        +getDescricao() String
+        +setId(int)
+        +setNome(String)
+        +setDescricao(String)
+    }
+
+    class Editora {
+        -int id
+        -String nome
+        -String cidade
+        -String pais
+        +getId() int
+        +getNome() String
+        +getCidade() String
+        +getPais() String
+        +setId(int)
+        +setNome(String)
+        +setCidade(String)
+        +setPais(String)
+    }
+
+    class Livro {
+        -int id
+        -String titulo
+        -String isbn
+        -LocalDate anoPublicacao
+        -String status
+        -int idCategoria
+        -int idAutor
+        -int idEditora
+        -String nomeAutor
+        -String nomeCategoria
+        -String nomeEditora
+        +getId() int
+        +getTitulo() String
+        +getIsbn() String
+        +getAnoPublicacao() LocalDate
+        +getStatus() String
+        +getIdCategoria() int
+        +getIdAutor() int
+        +getIdEditora() int
+        +getNomeAutor() String
+        +getNomeCategoria() String
+        +getNomeEditora() String
+        +setId(int)
+        +setTitulo(String)
+        +setIsbn(String)
+        +setAnoPublicacao(LocalDate)
+        +setStatus(String)
+        +setIdCategoria(int)
+        +setIdAutor(int)
+        +setIdEditora(int)
+        +setNomeAutor(String)
+        +setNomeCategoria(String)
+        +setNomeEditora(String)
+    }
+
+    class Usuario {
+        -int id
+        -String nome
+        -String email
+        -String telefone
+        -String senha
+        -String status
+        +getId() int
+        +getNome() String
+        +getEmail() String
+        +getTelefone() String
+        +getSenha() String
+        +getStatus() String
+        +setId(int)
+        +setNome(String)
+        +setEmail(String)
+        +setTelefone(String)
+        +setSenha(String)
+        +setStatus(String)
+    }
+
+    class Emprestimo {
+        -int id
+        -int livroId
+        -int usuarioId
+        -String tituloLivro
+        -String nomeUsuario
+        -LocalDate dataEmprestimo
+        -LocalDate dataPrevistaDevolucao
+        -LocalDate dataDevolucao
+        -String status
+        +getId() int
+        +getLivroId() int
+        +getUsuarioId() int
+        +getTituloLivro() String
+        +getNomeUsuario() String
+        +getDataEmprestimo() LocalDate
+        +getDataPrevistaDevolucao() LocalDate
+        +getDataDevolucao() LocalDate
+        +getStatus() String
+        +setId(int)
+        +setLivroId(int)
+        +setUsuarioId(int)
+        +setTituloLivro(String)
+        +setNomeUsuario(String)
+        +setDataEmprestimo(LocalDate)
+        +setDataPrevistaDevolucao(LocalDate)
+        +setDataDevolucao(LocalDate)
+        +setStatus(String)
+    }
+
+    %% ========================
+    %% DAO (Data Access Objects)
+    %% ========================
+    class ConnectionFactory {
+        -String URL
+        -String USER
+        -String PASSWORD
+        +getConnection() Connection
+        +closeConnection(Connection)
+    }
+
+    class AutorDAO {
+        +inserir(Autor)
+        +listarTodos() List~Autor~
+        +buscarPorId(int) Autor
+        +atualizar(Autor)
+        +excluir(int)
+        +contarTotal() int
+    }
+
+    class CategoriaDAO {
+        +inserir(Categoria)
+        +listarTodos() List~Categoria~
+        +buscarPorId(int) Categoria
+        +atualizar(Categoria)
+        +excluir(int)
+        +contarTotal() int
+    }
+
+    class EditoraDAO {
+        +inserir(Editora)
+        +listarTodos() List~Editora~
+        +atualizar(Editora)
+        +excluir(int)
+    }
+
+    class LivroDAO {
+        +inserir(Livro)
+        +listarTodos() List~Livro~
+        +buscar(String) List~Livro~
+        +buscarPorId(int) Livro
+        +atualizar(Livro)
+        +atualizarStatus(int, String)
+        +excluir(int)
+        +contarTotal() int
+        +contarDisponiveis() int
+    }
+
+    class UsuarioDAO {
+        +inserir(Usuario)
+        +listarTodos() List~Usuario~
+        +buscarPorId(int) Usuario
+        +autenticar(String, String) Usuario
+        +atualizar(Usuario)
+        +excluir(int)
+        +contarTotal() int
+        +contarAtivos() int
+    }
+
+    class EmprestimoDAO {
+        +inserir(Emprestimo)
+        +listarTodos() List~Emprestimo~
+        +registrarDevolucao(int)
+        +excluir(int)
+        +contarAtivos() int
+        +contarAtrasados() int
+    }
+
+    class RelatorioDAO {
+        +contarTitulosUnicos() int
+        +contarCopiasTotais() int
+        +contarEmprestimosAtivos() int
+        +contarEmprestimosAtrasados() int
+        +livrosPorCategoria() List~Object[]~
+        +resumoMembros() List~Object[]~
+    }
+
+    %% ========================
+    %% SERVICE (Regras de Negócio)
+    %% ========================
+    class AutorService {
+        -AutorDAO dao
+        +cadastrar(Autor)
+        +atualizar(Autor)
+        +excluir(int)
+        +listarTodos() List~Autor~
+        +contarTotal() int
+    }
+
+    class CategoriaService {
+        -CategoriaDAO dao
+        +cadastrar(Categoria)
+        +atualizar(Categoria)
+        +excluir(int)
+        +listarTodos() List~Categoria~
+        +contarTotal() int
+    }
+
+    class EditoraService {
+        -EditoraDAO dao
+        +cadastrar(Editora)
+        +atualizar(Editora)
+        +excluir(int)
+        +listarTodos() List~Editora~
+    }
+
+    class LivroService {
+        -LivroDAO dao
+        +cadastrar(Livro)
+        +atualizar(Livro)
+        +excluir(int)
+        +listarTodos() List~Livro~
+        +buscar(String) List~Livro~
+        +contarTotal() int
+        +contarDisponiveis() int
+    }
+
+    class UsuarioService {
+        -UsuarioDAO dao
+        +cadastrar(Usuario)
+        +atualizar(Usuario)
+        +excluir(int)
+        +listarTodos() List~Usuario~
+        +contarTotal() int
+        +contarAtivos() int
+        +autenticar(String, String) Usuario
+    }
+
+    class EmprestimoService {
+        -EmprestimoDAO dao
+        +realizarEmprestimo(Emprestimo)
+        +registrarDevolucao(int)
+        +listarTodos() List~Emprestimo~
+        +contarAtivos() int
+        +contarAtrasados() int
+    }
+
+    class RelatorioService {
+        -RelatorioDAO dao
+        +contarTitulosUnicos() int
+        +contarCopiasTotais() int
+        +contarEmprestimosAtivos() int
+        +contarEmprestimosAtrasados() int
+        +livrosPorCategoria() List~Object[]~
+        +resumoMembros() List~Object[]~
+    }
+
+    %% ========================
+    %% UI (Camada de Apresentação) – TODOS OS PAINÉIS
+    %% ========================
+    class TelaPrincipal {
+        -CardLayout cardLayout
+        -JPanel contentArea
+        -JLabel pgTitle, pgSub
+        -NavItem activeNav
+        +PainelDashboard painelDashboard
+        +PainelLivros painelLivros
+        +PainelAutores painelAutores
+        +PainelCategoria painelCategoria
+        +PainelEditoras painelEditoras
+        +PainelUsuarios painelUsuarios
+        +PainelEmprestimos painelEmprestimos
+        +PainelDevolucoes painelDevolucoes
+        +PainelEstoque painelEstoque
+        +PainelRelatorios painelRelatorios
+        +PainelLogin painelLogin
+        +showView(String)
+        +activateNav(NavItem)
+    }
+
+    class PainelDashboard {
+        -LivroService livroSvc
+        -EmprestimoService empSvc
+        -UsuarioService usuarioSvc
+        +refresh()
+    }
+
+    class PainelLivros {
+        -LivroService service
+        -AutorService autorSvc
+        -CategoriaService catSvc
+        -EditoraService editoraSvc
+        -DefaultTableModel tableModel
+        +refresh()
+        +openForm(int)
+        +confirmDelete(int)
+    }
+
+    class PainelAutores {
+        -AutorService service
+        -DefaultTableModel tableModel
+        +refresh()
+        +openForm(int)
+    }
+
+    class PainelCategoria {
+        -CategoriaService service
+        -DefaultTableModel tableModel
+        +refresh()
+        +openForm(int)
+    }
+
+    class PainelEditoras {
+        -EditoraService service
+        -DefaultTableModel tableModel
+        +refresh()
+        +openForm(int)
+    }
+
+    class PainelUsuarios {
+        -UsuarioService service
+        -DefaultTableModel tableModel
+        +refresh()
+        +openForm(int)
+    }
+
+    class PainelEmprestimos {
+        -EmprestimoService service
+        -LivroService livroSvc
+        -UsuarioService usuarioSvc
+        -DefaultTableModel tableModel
+        +refresh()
+        -openForm()
+    }
+
+    class PainelDevolucoes {
+        -EmprestimoService service
+        +refresh()
+    }
+
+    class PainelEstoque {
+        -LivroService service
+        -DefaultTableModel tableModel
+        -List~Livro~ livros
+        +refresh()
+    }
+
+    class PainelRelatorios {
+        -RelatorioService service
+        -int titulosUnicos
+        -int copiasTotais
+        -int emprestimosAtivos
+        -int emprestimosAtraso
+        -List~Object[]~ livrosPorCategoria
+        -List~Object[]~ resumoMembros
+        +refresh()
+    }
+
+    class PainelLogin {
+        -TelaPrincipal frame
+        -boolean showingLogin
+        -JLabel abaEntrar, abaCadastrar
+        -JPanel wrapEntrar, wrapCadastrar
+        -JPanel card
+        +rebuild()
+    }
+
+    %% Componentes visuais reutilizáveis (adicionei do segundo diagrama)
+    class Components {
+        <<static>>
+        +class RoundedPanel
+        +class StyledButton
+        +class Badge
+        +class BookCover
+        +class Avatar
+        +statCard(...) RoundedPanel
+        +card() RoundedPanel
+        +cardHeader(String, JComponent) JPanel
+        +qaBtn(...) StyledButton
+        +sectionLabel(String) JLabel
+        +formLabel(String) JLabel
+        +styledField(String) JTextField
+        +styledPassword() JPasswordField
+        +styledCombo(String[]) JComboBox
+        +progressBar(int) JPanel
+        +buildTable(TableModel) JTable
+    }
+
+    class Theme {
+        <<static>>
+        +Color SIDEBAR_BG
+        +Color ACCENT
+        +Color CONTENT_BG
+        +Color CARD_BG
+        +Color BTN_PRIMARY
+        +Color BTN_SUCCESS
+        +Color BTN_WARNING
+        +Color BTN_DANGER
+        +Color BTN_INFO
+        +Font bold(int)
+        +Font plain(int)
+    }
+
+    %% ========================
+    %% RELACIONAMENTOS
+    %% ========================
+    %% DAO – ConnectionFactory
+    ConnectionFactory <.. AutorDAO : usa
+    ConnectionFactory <.. CategoriaDAO : usa
+    ConnectionFactory <.. EditoraDAO : usa
+    ConnectionFactory <.. LivroDAO : usa
+    ConnectionFactory <.. UsuarioDAO : usa
+    ConnectionFactory <.. EmprestimoDAO : usa
+    ConnectionFactory <.. RelatorioDAO : usa
+
+    %% DAO – Service
+    AutorDAO <.. AutorService : instancia
+    CategoriaDAO <.. CategoriaService : instancia
+    EditoraDAO <.. EditoraService : instancia
+    LivroDAO <.. LivroService : instancia
+    UsuarioDAO <.. UsuarioService : instancia
+    EmprestimoDAO <.. EmprestimoService : instancia
+    RelatorioDAO <.. RelatorioService : instancia
+
+    %% TelaPrincipal – Painéis
+    TelaPrincipal --> PainelDashboard
+    TelaPrincipal --> PainelLivros
+    TelaPrincipal --> PainelAutores
+    TelaPrincipal --> PainelCategoria
+    TelaPrincipal --> PainelEditoras
+    TelaPrincipal --> PainelUsuarios
+    TelaPrincipal --> PainelEmprestimos
+    TelaPrincipal --> PainelDevolucoes
+    TelaPrincipal --> PainelEstoque
+    TelaPrincipal --> PainelRelatorios
+    TelaPrincipal --> PainelLogin
+
+    %% Painéis – Services
+    PainelDashboard --> LivroService : usa
+    PainelDashboard --> EmprestimoService : usa
+    PainelDashboard --> UsuarioService : usa
+
+    PainelLivros --> LivroService : usa
+    PainelLivros --> AutorService : usa
+    PainelLivros --> CategoriaService : usa
+    PainelLivros --> EditoraService : usa
+
+    PainelAutores --> AutorService : usa
+    PainelCategoria --> CategoriaService : usa
+    PainelEditoras --> EditoraService : usa
+    PainelUsuarios --> UsuarioService : usa
+    PainelEmprestimos --> EmprestimoService : usa
+    PainelEmprestimos --> LivroService : usa
+    PainelEmprestimos --> UsuarioService : usa
+    PainelDevolucoes --> EmprestimoService : usa
+    PainelEstoque --> LivroService : usa
+    PainelRelatorios --> RelatorioService : usa
+
+    %% Todos os painéis usam Components e Theme
+    PainelDashboard ..> Components : usa
+    PainelLivros ..> Components : usa
+    PainelAutores ..> Components : usa
+    PainelCategoria ..> Components : usa
+    PainelEditoras ..> Components : usa
+    PainelUsuarios ..> Components : usa
+    PainelEmprestimos ..> Components : usa
+    PainelDevolucoes ..> Components : usa
+    PainelEstoque ..> Components : usa
+    PainelRelatorios ..> Components : usa
+    PainelLogin ..> Components : usa
+
+    PainelDashboard ..> Theme : usa
+    PainelLivros ..> Theme : usa
+    PainelAutores ..> Theme : usa
+    PainelCategoria ..> Theme : usa
+    PainelEditoras ..> Theme : usa
+    PainelUsuarios ..> Theme : usa
+    PainelEmprestimos ..> Theme : usa
+    PainelDevolucoes ..> Theme : usa
+    PainelEstoque ..> Theme : usa
+    PainelRelatorios ..> Theme : usa
+    PainelLogin ..> Theme : usa
