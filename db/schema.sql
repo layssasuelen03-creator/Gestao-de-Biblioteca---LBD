@@ -1,3 +1,4 @@
+create schema biblioteca; 
 use biblioteca;
 
 create table usuario (
@@ -6,7 +7,8 @@ create table usuario (
 	email varchar(100) not null,
 	telefone varchar(15) not null,
 	senha varchar(255),
-	status varchar(20) default 'ativo'
+	status varchar(20) default 'ativo', 
+    constraint unique_email UNIQUE (email)
 );
 
 create table autor(
@@ -16,7 +18,7 @@ create table autor(
 );
 
 create table categoria(
-	id_Categoria int auto_increment primary key,
+	id_categoria int auto_increment primary key,
 	nome varchar(100) not null,
 	descricao varchar(100) not null
 );
@@ -39,15 +41,9 @@ create table livro(
     id_editora int not null, 
 	foreign key (id_categoria) references categoria(id_categoria),
 	foreign key (id_autor) references autor(id_autor), 
-    foreign key (id_editora) references editora(id_editora)
-);
-
-create table livro_autor(
-	id_livro_autor int primary key auto_increment, 
-    id_livro int not null, 
-    id_autor int not null, 
-    foreign key (id_livro) references livro(id_livro), 
-    foreign key (id_autor) references autor(id_autor)
+    foreign key (id_editora) references editora(id_editora), 
+      constraint unique_isbn UNIQUE (ISBN),
+    constraint chk_livro_status CHECK (status IN ('disponível', 'emprestado', 'manutenção'))
 );
 
 create table emprestimo(
@@ -59,16 +55,17 @@ create table emprestimo(
 	id_usuario int not null,
 	id_livro int not null,
 	foreign key (id_usuario) references usuario(id_usuario),
-	foreign key (id_livro) references livro(id_livro)
+	foreign key (id_livro) references livro(id_livro),
+	constraint chk_datas_emprestimo CHECK (data_prevista_devolucao >= data_emprestimo)
 );
 
-
+select * from usuario; 
 -- Listar livro com autores e categorias --
 
 SELECT l.titulo, l.ISBN, l.ano_publicacao, l.status, 
        c.nome AS categoria, a.nome AS autor, a.nacionalidade
 FROM livro l
-INNER JOIN categoria c ON l.id_categoria = c.id_Categoria
+INNER JOIN categoria c ON l.id_categoria = c.id_categoria
 INNER JOIN autor a ON l.id_autor = a.id_autor;
 
 -- Listar livros disponiveis para emprestimo --
@@ -100,7 +97,7 @@ WHERE e.status = 'ativo'
   -- Total de livros por categoria --
   SELECT c.nome AS categoria, COUNT(l.id_livro) AS total_livros
 FROM categoria c
-LEFT JOIN livro l ON c.Id_Categoria = l.Id_categoria
+LEFT JOIN livro l ON c.id_categoria = l.id_categoria
 GROUP BY c.id_categoria, c.nome
 ORDER BY total_livros DESC;
 
@@ -171,3 +168,35 @@ SELECT l.titulo, l.status,
 FROM livro l
 LEFT JOIN emprestimo e ON l.id_livro = e.id_livro AND e.status = 'ativo'
 WHERE l.id_livro = 1;  -- Substituir pelo ID do livro
+
+
+-- Simplifica a busca de quem está com livros pendentes em aberto hoje
+CREATE VIEW vw_emprestimos_ativos AS
+SELECT e.id_emprestimo, e.data_emprestimo, e.data_prevista_devolucao,
+       u.nome AS usuario, u.email, l.titulo AS livro
+FROM emprestimo e
+INNER JOIN usuario u ON e.id_usuario = u.id_usuario
+INNER JOIN livro l ON e.id_livro = l.id_livro
+WHERE e.status = 'ativo';
+
+
+-- Mostra o total de livro por categoria
+CREATE VIEW vw_total_livros_por_categoria AS
+SELECT 
+    c.nome AS nome_categoria, 
+    COUNT(l.id_livro) AS quantidade_livros
+FROM categoria c
+LEFT JOIN livro l ON c.id_categoria = l.id_categoria
+GROUP BY c.id_categoria, c.nome
+ORDER BY quantidade_livros DESC LIMIT 10; 
+
+
+-- Monitora os emprestimos atrasados
+CREATE VIEW vw_emprestimos_atrasados AS
+SELECT e.id_emprestimo, e.data_emprestimo, e.data_prevista_devolucao,
+       u.nome AS usuario, u.email, u.telefone, l.titulo AS livro,
+       DATEDIFF(CURDATE(), e.data_prevista_devolucao) AS dias_atraso
+FROM emprestimo e
+INNER JOIN usuario u ON e.id_usuario = u.id_usuario
+INNER JOIN livro l ON e.id_livro = l.id_livro
+WHERE e.status = 'ativo' AND e.data_prevista_devolucao < CURDATE();
